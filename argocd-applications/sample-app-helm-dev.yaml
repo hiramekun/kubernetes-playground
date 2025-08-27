@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-app-helm-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/hiramekun/kubernetes-playground.git
+    targetRevision: HEAD
+    path: helm-config/apps/sample-app
+    helm:
+      valueFiles:
+        - ../../environments/dev/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
