@@ -14,13 +14,13 @@ command -v terraform >/dev/null 2>&1 || { echo -e "${RED}❌ Terraform is requir
 command -v gcloud >/dev/null 2>&1 || { echo -e "${RED}❌ gcloud CLI is required but not installed.${NC}" >&2; exit 1; }
 command -v kubectl >/dev/null 2>&1 || { echo -e "${RED}❌ kubectl is required but not installed.${NC}" >&2; exit 1; }
 
+cd gke-setup/terraform
+
 # Check if terraform.tfvars exists
 if [ ! -f "terraform.tfvars" ]; then
     echo -e "${YELLOW}⚠️  terraform.tfvars not found. Please copy terraform.tfvars.example to terraform.tfvars and update the values.${NC}"
     exit 1
 fi
-
-cd gke-setup/terraform
 
 # Initialize Terraform
 echo -e "${GREEN}📋 Initializing Terraform...${NC}"

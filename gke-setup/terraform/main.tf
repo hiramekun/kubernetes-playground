@@ -39,6 +39,7 @@ resource "google_container_cluster" "main" {
   name               = "${var.cluster_name}"
   location           = var.region
   initial_node_count = 1
+  deletion_protection = false
   
   # Enable Workload Identity
   workload_identity_config {
@@ -68,8 +69,8 @@ resource "google_container_cluster" "main" {
   }
 
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "10.96.0.0/14"
-    services_ipv4_cidr_block = "10.100.0.0/16"
+    cluster_ipv4_cidr_block  = "10.48.0.0/14"
+    services_ipv4_cidr_block = "10.52.0.0/16"
   }
 
   depends_on = [google_project_service.container_api]
@@ -88,6 +89,8 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     preemptible  = var.preemptible
     machine_type = var.machine_type
+    disk_size_gb = 50
+    disk_type    = "pd-standard"
 
     # Google recommends custom service accounts with minimal permissions
     service_account = google_service_account.gke_nodes.email
