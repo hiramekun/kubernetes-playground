@@ -1,0 +1,59 @@
+name: Validate Helm and Kustomize Configurations
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'helm-config/**'
+      - 'kustomize-config/**'
+  push:
+    branches: [ main ]
+    paths:
+      - 'helm-config/**'
+      - 'kustomize-config/**'
+
+jobs:
+  validate-helm:
+    runs-on: ubuntu-latest
+    name: Validate Helm Charts
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: '3.12.0'
+
+    - name: Validate Helm chart syntax
+      run: helm template ./helm-config/apps/sample-app
+
+    - name: Test Helm dev environment values
+      run: helm template ./helm-config/apps/sample-app -f ./helm-config/environments/dev/values.yaml
+
+    - name: Test Helm prod environment values
+      run: helm template ./helm-config/apps/sample-app -f ./helm-config/environments/prod/values.yaml
+
+    - name: Lint Helm chart
+      run: helm lint ./helm-config/apps/sample-app
+
+  validate-kustomize:
+    runs-on: ubuntu-latest
+    name: Validate Kustomize Configurations
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+
+    - name: Validate Kustomize dev overlay
+      run: kubectl kustomize kustomize-config/environments/dev
+
+    - name: Validate Kustomize prod overlay
+      run: kubectl kustomize kustomize-config/environments/prod
+
+    - name: Validate Kustomize base
+      run: kubectl kustomize kustomize-config/base
