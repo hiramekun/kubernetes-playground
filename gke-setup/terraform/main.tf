@@ -61,11 +61,10 @@ resource "google_container_cluster" "main" {
     }
   }
 
-  # Security
+  # Security - Enable public nodes for external registry access
   private_cluster_config {
-    enable_private_nodes    = true
+    enable_private_nodes    = false
     enable_private_endpoint = false
-    master_ipv4_cidr_block  = "172.16.0.0/28"
   }
 
   ip_allocation_policy {
